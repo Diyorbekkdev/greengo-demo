@@ -3,6 +3,7 @@ import { httpClient } from "./utils";
 import { login, logout } from "./redux/store/auth-slice";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { message } from "antd";
 
 
 export const useAppProps = () => {
@@ -10,26 +11,26 @@ export const useAppProps = () => {
     const navigate = useNavigate();
     const { isAuth } = useSelector((state: any) => state.auth);
     const [loading, setLoading] = useState(false);
-    const getUser = async() => {
-        try{
+    const getUser = async () => {
+        try {
             setLoading(true);
             await httpClient('admin/me');
-            if(localStorage.getItem("accessToken")){
+            if (localStorage.getItem("accessToken")) {
                 dispatch(login())
-            }else{
+            } else {
                 navigate('/login');
             }
             setLoading(false);
-        }catch(err: any){
-            console.log(err);
+        } catch (err: any) {
+            message.error(err);
             navigate('/login');
             dispatch(logout())
             setLoading(false)
-        }finally{
+        } finally {
             setLoading(false)
         }
     }
-    useEffect(()=> {
+    useEffect(() => {
         getUser()
     }, [])
     return {
